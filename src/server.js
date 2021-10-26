@@ -15,21 +15,25 @@ app.use(express.urlencoded({ extended: true }));
  * Route Handlers
  ********************************************************************/
 
-app.all("/:status/*", (req, res) => {
-  const _status = req.param.status || 200;
+const _handleResponse = (req, res) => {
+  const _status = req.params.status || 200;
+  log.green('-------------------------------------------');
+  log.green(`${req.originalUrl}`);
   log.white(req.headers);
   log.blue(req.body);
+  log.grey(req.params);
+  log.grey(`Response Status: ${_status}`);
   res.status(_status).end("OK");
-});
+};
 
-app.all("*", (req, res) => {
-  log.white(req.headers);
-  log.blue(req.body);
-  res.status(200).end("OK");
-});
+app.all("/:status/*", _handleResponse);
+app.all("*", _handleResponse);
 
 /********************************************************************
  * Start the Express Server
  ********************************************************************/
-app.listen(PORT || 3000);
+const _port = PORT || 3000;
+app.listen(_port, () => {
+  log.green(`Listening on port: ${_port}`);
+});
 
